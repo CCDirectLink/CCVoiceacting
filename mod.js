@@ -3,11 +3,13 @@ if(!cc)
 
 var voiceActing = new function VoiceActing(){
     var modPath;
+    var soundsPath = "sounds/";
     
     this.lines = {};
 
     this.initialize = function(){
         modPath = simplify.getMod('voiceacting').getBaseDirectory();
+        soundsPath = modPath.substring(7) + soundsPath; // Removing 'assets/' from soundpath
 
         this.loadLines();
 
@@ -21,6 +23,9 @@ var voiceActing = new function VoiceActing(){
                 this.lines[map] = {};
                 for(var id in file){
                     var path = file[id];
+                    if(path.indexOf('./') === 0) {
+                        path = soundsPath + path.substring(2);
+                    }
                     this.lines[map][id] = new cc.ig.Sound(path);
                 }
             }
