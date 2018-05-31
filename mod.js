@@ -4,7 +4,7 @@ if(!cc)
 var voiceActing = new function VoiceActing(){
     var modPath;
     var soundsPath = "sounds/";
-    
+    var beep = true;
     this.lines = {};
 
     this.initialize = function(){
@@ -14,13 +14,14 @@ var voiceActing = new function VoiceActing(){
         this.loadTracks();
 
         _interceptShowMSG(_handleMessage.bind(this));
+        _interceptPlayBeep();
     }
 
     this.loadTracks = function(){
         simplify.resources.loadJSON(modPath + 'fileTable.json', function(files) {
             for(var map in files){
                 var tracks = files[map].tracks;
-                
+
                 for(var i = 0; i < tracks.length; i++) {
                     var track = tracks[i];
                     if(track.path.indexOf('./') === 0) {
@@ -36,7 +37,6 @@ var voiceActing = new function VoiceActing(){
     function _handleMessage(message){
         var map = cc.ig.getMapName();
         var id = message.data.langUid;
-
         if(!this.lines[map])
             return console.warn('Map not found in script: ', map);
 
@@ -44,10 +44,10 @@ var voiceActing = new function VoiceActing(){
 
         if(trackId === undefined) //trackId may be 0
             return console.warn('Line not found in script: ', map, id);
-        
+
         if(trackId === -1)
             return;
-
+        beep = false;
         var track = this.lines[map].tracks[trackId].track;
         track.play();
     }
@@ -57,6 +57,7 @@ var voiceActing = new function VoiceActing(){
     }
     function _onEnd() {
         console.log("end");
+		beep = true;
     }
 
     function _interceptShowMSG(callback){
@@ -66,7 +67,15 @@ var voiceActing = new function VoiceActing(){
             return original.apply(this, arguments);
         }
     }
-
+    function _interceptPlayBeep() {
+        var play_sfx = cc.sc.varNames.play_sfx;
+        var old = cc.sc["message-model"].prototype[play_sfx];
+        cc.sc["message-model"].prototype[play_sfx] = function(a) {
+            if(beep) {
+              old.call(this, a);
+            }
+        }
+    }
     function _prepareTrack(path, pauses, onPause, onEnd){
         var breaks = pauses || [0];
         var nextBreak = 0;

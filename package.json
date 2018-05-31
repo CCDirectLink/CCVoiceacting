@@ -1,5 +1,6 @@
 {
 	"name": "voiceacting",
-	"description": "Wow, what are all these sounds?",
-	"main": "mod.js"
+	"description": "Wow what are all these sounds?",
+	"main": "mod.js",
+	"table" : "definitions.db"
 }

@@ -1,0 +1,54 @@
+{
+    "type": "object",
+    "name": "cc",
+    "members": [
+        {
+            "type": "object",
+            "name": "sc",
+            "members": [
+                {
+                    "type": "member",
+                    "refType": "var",
+                    "name": "message-model",
+                    "parent": "sc",
+                    "compiled": {
+                        "pattern": "callee.property.name",
+                        "from": {
+                            "type": "NewExpression",
+                            "values": [
+                                {
+                                    "name": "arguments.0.arguments.0.raw",
+                                    "value": "\"sc.gui.status-hud.lvl\""
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "name": "varNames",
+                    "members": [
+                        {
+                            "type": "member",
+                            "refType": "raw",
+                            "name": "play_sfx",
+                            "parent": "",
+                            "compiled": {
+                                "pattern": "body.6.expression.callee.property.name",
+                                "from": {
+                                    "type": "BlockStatement",
+                                    "values": [
+                                        {
+                                            "name": "body.3.expression.right.arguments.1.properties.3.key.name",
+                                            "value": "optimize"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
