@@ -11,24 +11,25 @@ var voiceActing = new function VoiceActing(){
         modPath = simplify.getMod('voiceacting').getBaseDirectory();
         soundsPath = modPath.substring(7) + soundsPath; // Removing 'assets/' from soundpath
 
-        this.loadLines();
+        this.loadTracks();
 
         _interceptShowMSG(_handleMessage.bind(this));
     }
 
-    this.loadLines = function(){
+    this.loadTracks = function(){
         simplify.resources.loadJSON(modPath + 'fileTable.json', function(files) {
             for(var map in files){
-                var file = files[map];
-                this.lines[map] = {};
-                for(var id in file){
-                    var path = file[id];
-                    if(path.indexOf('./') === 0) {
-                        path = soundsPath + path.substring(2);
+                var tracks = files[map].tracks;
+                
+                for(var i = 0; i < tracks.length; i++) {
+                    var track = tracks[i];
+                    if(track.path.indexOf('./') === 0) {
+                        track.path = soundsPath + track.path.substring(2);
                     }
-                    this.lines[map][id] = new cc.ig.Sound(path);
+                    track.track = _prepareTrack(track.path, track.pauses, _onPause, _onEnd);
                 }
             }
+            this.lines = files;
         }.bind(this));
     }
 
@@ -38,10 +39,24 @@ var voiceActing = new function VoiceActing(){
 
         if(!this.lines[map])
             return console.warn('Map not found in script: ', map);
-        if(!this.lines[map][id])
-            return console.warn('Line not found in script: ', map, id);
 
-        this.lines[map][id].play();
+        var trackId = this.lines[map].lines[id];
+
+        if(trackId === undefined) //trackId may be 0
+            return console.warn('Line not found in script: ', map, id);
+        
+        if(trackId === -1)
+            return;
+
+        var track = this.lines[map].tracks[trackId].track;
+        track.play();
+    }
+
+    function _onPause(track){
+        console.log("pause", track)
+    }
+    function _onEnd() {
+        console.log("end");
     }
 
     function _interceptShowMSG(callback){
@@ -50,6 +65,27 @@ var voiceActing = new function VoiceActing(){
             callback.call(voiceActing, this.message);
             return original.apply(this, arguments);
         }
+    }
+
+    function _prepareTrack(path, pauses, onPause, onEnd){
+        var breaks = pauses || [0];
+        var nextBreak = 0;
+        var track = new cc.ig.Track(path, breaks[nextBreak++] || 0);
+        track.loop = false;
+        track[cc.ig.bgm.varNames.endCallback] = function() {
+            track.pause();
+
+            var next = breaks[nextBreak++];
+            if(next){
+                track.pause();
+                track[cc.ig.bgm.varNames.loopEnd] = next;
+                onPause(track);
+            } else if(onEnd){
+                track.reset();
+                onEnd();
+            }
+        }
+        return track;
     }
 
     document.body.addEventListener('modsLoaded', this.initialize.bind(this));
