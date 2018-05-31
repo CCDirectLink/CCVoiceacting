@@ -1,12 +1,5 @@
 {
     "autumn.entrance": {
-        "tracks": [{
-            "path": "./test.ogg",
-            "pauses": [15]
-        }],
-        "lines": {
-            "6": 0,
-            "7": 0
-        }
+        "6": "./test.ogg"
     }
 }
