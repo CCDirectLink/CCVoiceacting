@@ -19,5 +19,14 @@
             "253": 0,
             "254": 0
         }
+    },
+    "cargo-ship.bridge": {
+        "tracks": [{
+            "path": "./cargo-ship.bridge/satellite.ogg",
+            "pauses": [3.9]
+        }],
+        "lines": {
+            "58": 0
+        }
     }
 }
