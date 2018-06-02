@@ -82,8 +82,6 @@ var voiceActing = new function VoiceActing(){
         var track = new cc.ig.Track(path, breaks[nextBreak++] || 0);
         track.loop = false;
         track[cc.ig.bgm.varNames.endCallback] = function() {
-            track.pause();
-
             var next = breaks[nextBreak++];
             if(next){
                 track.pause();
