@@ -34,6 +34,10 @@ var voiceActing = new function VoiceActing(){
         }.bind(this));
     }
 
+    this.prepareTrack = function(file, pauses, pause, end) {
+        return _prepareTrack(file, pauses || [], pause || _onPause, end || _onEnd);
+    }
+
     function _handleMessage(message){
         var map = cc.ig.getMapName();
         var id = message.data.langUid;
